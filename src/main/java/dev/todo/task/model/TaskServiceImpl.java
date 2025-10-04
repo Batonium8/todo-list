@@ -1,5 +1,6 @@
 package dev.todo.task.model;
 
+import dev.todo.task.Status;
 import dev.todo.task.Task;
 import dev.todo.task.repository.TaskRepository;
 import org.springframework.stereotype.Service;
@@ -34,6 +35,11 @@ public class TaskServiceImpl implements TaskService{
     }
 
     @Override
+    public List<Task> getTaskByStatus(Status status) {
+        return repository.findAllByStatus(status);
+    }
+
+    @Override
     public boolean updateTask(Long id, Task task) {
         Optional<Task> optionalTask = repository.findById(id);
 
@@ -43,9 +49,20 @@ public class TaskServiceImpl implements TaskService{
             newTask.setStatus(task.getStatus());
             newTask.setCreatedAt(task.getCreatedAt());
             newTask.setUpdatedAt(LocalDate.now());
+            repository.save(newTask);
             return true;
         }
         return false;
+    }
+
+    @Override
+    public boolean deleteTask(Long id) {
+        if (repository.existsById(id)){
+            repository.deleteById(id);
+            return true;
+        }
+        return false;
+
     }
 
 }
